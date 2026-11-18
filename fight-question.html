@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Fight Question</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#bde8ff;--ink:#1d2a44;--card:#fff;--soft:#eef6ff;--a:#ff7a59;--b:#3ea6ff;--g:#34c759;--y:#ffcc33;--r:#ff4d6d;color-scheme:light}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#16213a;--ink:#f2f5ff;--card:#243256;--soft:#1c2744;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#16213a;--ink:#f2f5ff;--card:#243256;--soft:#1c2744;color-scheme:dark}
+*{box-sizing:border-box}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Fredoka','Comic Sans MS',system-ui,sans-serif;min-height:100vh}
+main{max-width:920px;margin:0 auto;padding:16px}
+h1{font-size:clamp(32px,7vw,52px);margin:8px 0;text-align:center;text-shadow:3px 3px 0 var(--y)}
+h2{margin:0 0 8px;font-size:20px}
+.card{background:var(--card);border:3px solid var(--ink);border-radius:18px;padding:16px;box-shadow:4px 4px 0 var(--ink);margin-bottom:16px}
+.grid{display:grid;gap:16px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr))}
+input,select,textarea{width:100%;font:inherit;padding:10px 12px;border:3px solid var(--ink);border-radius:12px;background:var(--soft);color:var(--ink);margin:4px 0 8px}
+button{font:inherit;font-weight:700;cursor:pointer;border:3px solid var(--ink);border-radius:12px;padding:10px 16px;background:var(--y);color:#1d2a44;box-shadow:3px 3px 0 var(--ink);transition:transform .08s}
+button:hover:not(:disabled){transform:translate(-1px,-1px)}
+button:active:not(:disabled){transform:translate(2px,2px);box-shadow:1px 1px 0 var(--ink)}
+button:disabled{opacity:.5;cursor:not-allowed}
+.p{background:var(--a)}.s{background:var(--b)}.ok{background:var(--g)}
+.avs{display:flex;flex-wrap:wrap;gap:8px;margin:8px 0}
+.avs button{font-size:30px;padding:4px 10px;background:var(--soft)}
+.avs button.on{background:var(--y);transform:scale(1.1)}
+.hide{display:none!important}
+.code{font-size:44px;letter-spacing:8px;font-weight:700;text-align:center;background:var(--soft);border:3px dashed var(--ink);border-radius:14px;padding:6px}
+.pl{display:flex;flex-wrap:wrap;gap:10px}
+.chip{background:var(--soft);border:3px solid var(--ink);border-radius:14px;padding:8px 12px;font-weight:600}
+.hint{font-size:14px;opacity:.8}
+.q{font-size:clamp(20px,4vw,28px);font-weight:700;text-align:center;padding:8px}
+.bar{height:14px;border:3px solid var(--ink);border-radius:10px;background:var(--soft);overflow:hidden}
+.bar>i{display:block;height:100%;background:var(--g);width:100%}
+.opts{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));margin-top:12px}
+.opts button{font-size:18px;padding:14px;text-align:left}
+.opts button:nth-child(1){background:#ff9aa8}.opts button:nth-child(2){background:#9ad0ff}
+.opts button:nth-child(3){background:#ffe27a}.opts button:nth-child(4){background:#a9efb8}
+.opts button.right{outline:5px solid var(--g)}
+.opts button.wrong{outline:5px solid var(--r);opacity:.7}
+.opts button.mine{border-style:dashed}
+.arena{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.ch{background:var(--card);border:3px solid var(--ink);border-radius:16px;padding:10px;text-align:center;position:relative}
+.ch .av{font-size:54px;line-height:1.1}
+.ch.me{background:var(--soft);outline:4px solid var(--y)}
+.ch.dead{filter:grayscale(1);opacity:.55}
+.ch.dead::after{content:"💀";position:absolute;top:4px;right:8px;font-size:26px}
+.ch.hit{animation:shake .5s}
+.ch.atk .av{animation:jump .5s}
+.ch.done::before{content:"✔";position:absolute;top:4px;left:8px;color:var(--g);font-weight:700}
+.hp{height:16px;border:3px solid var(--ink);border-radius:10px;background:var(--soft);overflow:hidden;margin:6px 0 2px}
+.hp>i{display:block;height:100%;background:var(--r);transition:width .5s}
+.sc{font-size:14px;font-weight:600}
+.msg{text-align:center;font-weight:700;min-height:28px;margin:12px 0}
+.row{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.row>*{flex:1}
+.qi{display:flex;justify-content:space-between;gap:8px;align-items:center;background:var(--soft);border-radius:10px;padding:6px 10px;margin:4px 0;font-size:14px}
+.qi button{padding:2px 8px;flex:none;box-shadow:none}
+.win{font-size:90px;text-align:center}
+@keyframes shake{0%,100%{transform:translateX(0)}20%{transform:translateX(-10px) rotate(-3deg)}40%{transform:translateX(10px) rotate(3deg)}60%{transform:translateX(-8px)}80%{transform:translateX(8px)}}
+@keyframes jump{50%{transform:translateY(-14px) scale(1.2)}}
+</style>
+</head>
+<body>
+<main>
+<h1>⚔️ Fight Question</h1>
+
+<section id="home">
+  <div class="card">
+    <h2>1. Siapa kamu?</h2>
+    <label>Nama<input id="nm" maxlength="12" placeholder="Tulis namamu"></label>
+    <div>Pilih karakter</div>
+    <div class="avs" id="avs"></div>
+  </div>
+  <div class="grid">
+    <div class="card">
+      <h2>2a. Buat room</h2>
+      <label>Jumlah pemain maksimal
+        <select id="mx"><option>2</option><option>3</option><option>4</option><option selected>5</option><option>6</option><option>7</option><option>8</option></select>
+      </label>
+      <button class="p" id="bCreate">Buat Room</button>
+    </div>
+    <div class="card">
+      <h2>2b. Gabung room</h2>
+      <label>Kode room<input id="cd" maxlength="4" placeholder="ABCD" style="text-transform:uppercase"></label>
+      <button class="s" id="bJoin">Gabung</button>
+      <div class="msg" id="hmsg"></div>
+    </div>
+  </div>
+  <p class="hint">ℹ️ Versi ini berjalan di satu perangkat: buka game ini di beberapa tab atau jendela browser untuk mencoba main bersama. Untuk main antar HP atau komputer lewat internet, game perlu server (bisa saya buatkan).</p>
+</section>
+
+<section id="lobby" class="hide">
+  <button id="bBack" style="margin-bottom:16px">← Kembali</button>
+  <div class="card">
+    <h2>Kode room (bagikan ke pemain lain)</h2>
+    <div class="code" id="rc"></div>
+    <h2 style="margin-top:12px">Pemain <span id="pc"></span></h2>
+    <div class="pl" id="pl"></div>
+  </div>
+  <div class="card hide" id="hostbox">
+    <h2>Pengaturan host</h2>
+    <label>Sumber pertanyaan
+      <select id="src"><option value="default">Pertanyaan bawaan (kategori Umum)</option><option value="custom">Buat pertanyaan sendiri</option></select>
+    </label>
+    <div id="editor" class="hide">
+      <textarea id="qt" rows="2" placeholder="Tulis pertanyaan"></textarea>
+      <input class="oi" placeholder="Pilihan A"><input class="oi" placeholder="Pilihan B">
+      <input class="oi" placeholder="Pilihan C"><input class="oi" placeholder="Pilihan D">
+      <label>Jawaban benar<select id="ca"><option value="0">A</option><option value="1">B</option><option value="2">C</option><option value="3">D</option></select></label>
+      <button class="s" id="bAdd">+ Tambah pertanyaan</button>
+      <div id="ql" style="margin-top:8px"></div>
+    </div>
+    <button class="ok" id="bStart" style="margin-top:8px">Mulai Game</button>
+    <div class="msg" id="lmsg"></div>
+  </div>
+  <div class="card" id="waitbox"><b>Menunggu host memulai game…</b></div>
+</section>
+
+<section id="game" class="hide">
+  <div class="card">
+    <div class="row"><b id="qn"></b><span class="hint" style="text-align:right" id="tl"></span></div>
+    <div class="bar"><i id="tb"></i></div>
+    <div class="q" id="qq"></div>
+    <div class="opts" id="op"></div>
+    <div class="msg" id="gm"></div>
+  </div>
+  <div class="arena" id="ar"></div>
+</section>
+
+<section id="end" class="hide">
+  <div class="card">
+    <div class="win" id="wa"></div>
+    <h2 style="text-align:center" id="wn"></h2>
+    <div id="rk"></div>
+    <button class="p" onclick="location.reload()" style="margin-top:12px">Main lagi</button>
+  </div>
+</section>
+</main>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=t=>String(t).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const AVS=['🐱','🐶','🐸','🐵','🦊','🐼','🐯','🐷'];
+const BANK=[
+["Ibu kota Indonesia saat ini adalah…",["Jakarta","Bandung","Surabaya","Medan"],0],
+["Hewan manakah yang bisa terbang?",["Kucing","Burung","Sapi","Ikan"],1],
+["Berapa hasil 7 × 8?",["54","56","64","48"],1],
+["Planet terdekat dari Matahari adalah…",["Venus","Bumi","Merkurius","Mars"],2],
+["Warna campuran biru dan kuning adalah…",["Hijau","Ungu","Oranye","Merah"],0],
+["Berapa jumlah hari dalam seminggu?",["5","6","7","8"],2],
+["Alat musik tradisional dari Jawa Barat adalah…",["Sasando","Angklung","Tifa","Sape"],1],
+["Gas yang kita hirup untuk bernapas adalah…",["Oksigen","Helium","Karbon","Nitrogen"],0],
+["Samudra terluas di dunia adalah…",["Atlantik","Hindia","Arktik","Pasifik"],3],
+["Berapa hasil 100 − 37?",["63","73","67","57"],0],
+["Pulau terbesar di Indonesia adalah…",["Jawa","Sumatra","Kalimantan","Papua"],2],
+["Bendera Indonesia berwarna…",["Merah Putih","Putih Merah","Merah Biru","Hijau Putih"],0]
+];
+const me={id:Math.random().toString(36).slice(2,9),name:'',av:AVS[0]};
+let ch=null,room=null,isHost=false,S=null,hostQ=[],qi=-1,hT=null,custom=[],lastKey='',joinT=null,maxP=5,au=null;
+
+/* ---------- audio ---------- */
+function tone(f,d,t='sine',delay=0){try{au=au||new (window.AudioContext||window.webkitAudioContext)();const o=au.createOscillator(),g=au.createGain();o.type=t;o.frequency.value=f;g.gain.value=.15;o.connect(g);g.connect(au.destination);const s=au.currentTime+delay;o.start(s);g.gain.exponentialRampToValueAtTime(.001,s+d);o.stop(s+d)}catch(e){}}
+const sfx={hit:()=>{tone(220,.15,'sawtooth');tone(110,.25,'square',.1)},wrong:()=>tone(140,.45,'sawtooth'),ok:()=>tone(700,.15),win:()=>[523,659,784,1046].forEach((f,i)=>tone(f,.25,'triangle',i*.15))};
+
+/* ---------- home ---------- */
+function show(id){['home','lobby','game','end'].forEach(s=>$('#'+s).classList.toggle('hide',s!==id))}
+$('#avs').innerHTML=AVS.map((a,i)=>`<button class="${i?'':'on'}" data-a="${a}">${a}</button>`).join('');
+$('#avs').onclick=e=>{const b=e.target.closest('button');if(!b)return;me.av=b.dataset.a;[...$('#avs').children].forEach(x=>x.classList.toggle('on',x===b))};
+function ready(){me.name=$('#nm').value.trim();if(!me.name){$('#hmsg').textContent='Isi namamu dulu ya 🙂';$('#nm').focus();return false}return true}
+function openCh(){if(!ch){ch=new BroadcastChannel('fight-question-v1');ch.onmessage=e=>onMsg(e.data)}}
+function send(m){ch.postMessage({room,...m})}
+
+$('#bCreate').onclick=()=>{
+  if(!ready())return;openCh();
+  room=Array.from({length:4},()=>'ABCDEFGHJKMNPQRSTUVWXYZ'[Math.random()*23|0]).join('');
+  isHost=true;maxP=+$('#mx').value;
+  S={phase:'lobby',players:[],max:maxP,qn:0};
+  S.players.push(newP(me));pushState();show('lobby');
+};
+$('#bJoin').onclick=()=>{
+  if(!ready())return;const c=$('#cd').value.trim().toUpperCase();
+  if(c.length<4){$('#hmsg').textContent='Masukkan 4 huruf kode room';return}
+  openCh();room=c;isHost=false;
+  send({type:'join',p:{id:me.id,name:me.name,av:me.av}});
+  joinT=setTimeout(()=>{room=null;$('#hmsg').textContent='Room tidak ditemukan. Cek kode atau buka di browser yang sama.'},1500);
+};
+const newP=p=>({id:p.id,name:p.name,av:p.av,hp:100,score:0,ans:null,alive:true});
+
+/* ---------- messaging ---------- */
+function onMsg(m){
+  if(m.room!==room||!room)return;
+  if(isHost){
+    if(m.type==='join'){
+      if(S.phase!=='lobby'){send({type:'deny',id:m.p.id,why:'Game sudah dimulai'});return}
+      if(S.players.some(p=>p.id===m.p.id))return;
+      if(S.players.length>=S.max){send({type:'deny',id:m.p.id,why:'Room penuh'});return}
+      S.players.push(newP(m.p));pushState();
+    }
+    if(m.type==='ans')onAns(m.id,m.i);
+    if(m.type==='leave')onLeave(m.id);
+  }else{
+    if(m.type==='state'){clearTimeout(joinT);S=m.S;if(!$('#home').classList.contains('hide'))show('lobby');render()}
+    if(m.type==='deny'&&m.id===me.id){clearTimeout(joinT);room=null;$('#hmsg').textContent=m.why}
+    if(m.type==='close'){room=null;S=null;lastKey='';show('home');$('#hmsg').textContent='Host menutup room'}
+  }
+}
+function pushState(){send({type:'state',S});render()}
+function leaveRoom(){
+  if(room&&ch)send(isHost?{type:'close'}:{type:'leave',id:me.id});
+  clearTimeout(hT);clearTimeout(joinT);room=null;S=null;isHost=false;lastKey='';
+  show('home');
+}
+$('#bBack').onclick=()=>{leaveRoom();$('#hmsg').textContent=''};
+addEventListener('beforeunload',()=>{if(room&&ch)send(isHost?{type:'close'}:{type:'leave',id:me.id})});
+
+/* ---------- host logic ---------- */
+$('#src').onchange=()=>$('#editor').classList.toggle('hide',$('#src').value!=='custom');
+$('#bAdd').onclick=()=>{
+  const t=$('#qt').value.trim(),o=[...document.querySelectorAll('.oi')].map(i=>i.value.trim());
+  if(!t||o.some(x=>!x)){$('#lmsg').textContent='Isi pertanyaan dan 4 pilihan';return}
+  custom.push([t,o,+$('#ca').value]);$('#qt').value='';document.querySelectorAll('.oi').forEach(i=>i.value='');
+  $('#lmsg').textContent='';drawQL();
+};
+function drawQL(){$('#ql').innerHTML=custom.map((q,i)=>`<div class="qi"><span>${i+1}. ${esc(q[0])}</span><button data-d="${i}">✕</button></div>`).join('')}
+$('#ql').onclick=e=>{const b=e.target.closest('button');if(b){custom.splice(+b.dataset.d,1);drawQL()}};
+$('#bStart').onclick=()=>{
+  if(S.players.length<2){$('#lmsg').textContent='Minimal 2 pemain untuk mulai';return}
+  const useC=$('#src').value==='custom';
+  if(useC&&!custom.length){$('#lmsg').textContent='Tambahkan minimal 1 pertanyaan';return}
+  hostQ=(useC?custom:BANK).slice().sort(()=>Math.random()-.5);qi=-1;nextQ();
+};
+function nextQ(){
+  qi=(qi+1)%hostQ.length;const q=hostQ[qi];
+  S.phase='q';S.qn++;S.q={t:q[0],o:q[1]};S.reveal=null;S.deadline=Date.now()+15000;
+  S.players.forEach(p=>p.ans=null);
+  pushState();clearTimeout(hT);hT=setTimeout(resolve,15000);
+}
+function onAns(id,i){
+  if(S.phase!=='q')return;const p=S.players.find(x=>x.id===id);
+  if(!p||!p.alive||p.ans!==null)return;p.ans=i;pushState();
+  if(S.players.filter(x=>x.alive).every(x=>x.ans!==null)){clearTimeout(hT);resolve()}
+}
+function onLeave(id){
+  const p=S.players.find(x=>x.id===id);if(!p)return;
+  if(S.phase==='lobby')S.players=S.players.filter(x=>x.id!==id);
+  else{p.alive=false;p.hp=0}
+  pushState();
+  if(S.phase==='q'&&S.players.filter(x=>x.alive).every(x=>x.ans!==null)){clearTimeout(hT);resolve()}
+}
+function resolve(){
+  clearTimeout(hT);if(S.phase!=='q')return;
+  const c=hostQ[qi][2],al=S.players.filter(p=>p.alive);
+  const cor=al.filter(p=>p.ans===c),wr=al.filter(p=>p.ans!==c);
+  const R={c,hit:[],atk:[],msg:''};
+  if(!wr.length){cor.forEach(p=>p.score+=10);R.msg='Semua benar! Semua dapat +10 skor 🎉'}
+  else if(!cor.length){R.msg='Semua salah! Tidak ada serangan 😅'}
+  else{
+    wr.forEach(p=>{p.hp=Math.max(0,p.hp-10*cor.length);R.hit.push(p.id)});
+    cor.forEach(p=>{p.score+=10;R.atk.push(p.id)});
+    R.msg=`${cor.length} pemain benar menyerang ${wr.length} pemain yang salah! −${10*cor.length} HP`;
+  }
+  S.players.forEach(p=>{if(p.hp<=0)p.alive=false});
+  S.phase='reveal';S.reveal=R;pushState();
+  hT=setTimeout(()=>{
+    const live=S.players.filter(p=>p.alive);
+    if(live.length<=1){
+      const pool=live.length?live:S.players.slice().sort((a,b)=>b.score-a.score).slice(0,1);
+      S.phase='end';S.winner=pool[0].id;pushState();
+    }else nextQ();
+  },4000);
+}
+
+/* ---------- render ---------- */
+function render(){
+  if(!S)return;
+  const host=isHost,key=S.phase+':'+S.qn;
+  if(S.phase==='lobby'){
+    $('#rc').textContent=room;$('#pc').textContent=`(${S.players.length}/${S.max})`;
+    $('#pl').innerHTML=S.players.map(p=>`<div class="chip">${p.av} ${esc(p.name)}${p.id===me.id?' (kamu)':''}</div>`).join('');
+    $('#hostbox').classList.toggle('hide',!host);$('#waitbox').classList.toggle('hide',host);
+    return;
+  }
+  if(S.phase==='end'){
+    show('end');const w=S.players.find(p=>p.id===S.winner);
+    $('#wa').textContent=w.av;$('#wn').textContent=`🏆 ${w.name} menang!`;
+    $('#rk').innerHTML=S.players.slice().sort((a,b)=>b.hp-a.hp||b.score-a.score).map((p,i)=>`<div class="qi"><span>${i+1}. ${p.av} ${esc(p.name)}</span><span>❤ ${p.hp} · ⭐ ${p.score}</span></div>`).join('');
+    if(lastKey!==key){sfx.win();lastKey=key}
+    return;
+  }
+  show('game');
+  const R=S.reveal,mp=S.players.find(p=>p.id===me.id),rev=S.phase==='reveal';
+  $('#qn').textContent='Pertanyaan '+S.qn;$('#qq').textContent=S.q.t;
+  $('#op').innerHTML=S.q.o.map((o,i)=>{
+    let cl='';if(rev){cl=i===R.c?'right':(mp&&mp.ans===i?'wrong':'')}else if(mp&&mp.ans===i)cl='mine';
+    return `<button class="${cl}" data-i="${i}" ${rev||!mp||!mp.alive||mp.ans!==null?'disabled':''}>${'ABCD'[i]}. ${esc(o)}</button>`}).join('');
+  $('#gm').textContent=rev?R.msg:(mp&&!mp.alive?'Kamu sudah gugur, tonton sampai selesai 👀':(mp&&mp.ans!==null?'Jawaban terkirim, menunggu pemain lain…':'Pilih jawabanmu!'));
+  $('#ar').innerHTML=S.players.map(p=>{
+    const cl=['ch',p.id===me.id?'me':'',p.alive?'':'dead',rev&&R.hit.includes(p.id)?'hit':'',rev&&R.atk.includes(p.id)?'atk':'',!rev&&p.alive&&p.ans!==null?'done':''].join(' ');
+    return `<div class="${cl}"><div class="av">${p.av}</div><b>${esc(p.name)}</b><div class="hp"><i style="width:${p.hp}%"></i></div><div class="sc">❤ ${p.hp} · ⭐ ${p.score}</div></div>`}).join('');
+  if(lastKey!==key){
+    lastKey=key;
+    if(rev){if(R.hit.length)sfx.hit();if(mp&&mp.alive!==undefined&&R.hit.includes(me.id))setTimeout(sfx.wrong,250);else if(mp&&R.atk.includes(me.id))setTimeout(sfx.ok,250)}
+  }
+}
+$('#op').onclick=e=>{
+  const b=e.target.closest('button');if(!b||b.disabled)return;const i=+b.dataset.i;
+  if(isHost)onAns(me.id,i);else send({type:'ans',id:me.id,i});
+};
+setInterval(()=>{
+  if(!S||S.phase!=='q'){if(S&&S.phase==='reveal'){$('#tb').style.width='0%';$('#tl').textContent=''}return}
+  const l=Math.max(0,S.deadline-Date.now());
+  $('#tb').style.width=(l/150)+'%';$('#tl').textContent=Math.ceil(l/1000)+' detik';
+},100);
+</script>
+</body>
+</html>
